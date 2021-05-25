@@ -1,4 +1,4 @@
-package cz.schrek.sherdog.enums
+package cz.schrek.sherdog.controller.dto
 
 enum class AuthStatus {
     APPROVED, REJECTED

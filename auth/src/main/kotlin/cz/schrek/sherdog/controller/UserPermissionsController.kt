@@ -1,7 +1,7 @@
 package cz.schrek.sherdog.controller
 
 import cz.schrek.sherdog.controller.dto.UserPermissionsResponse
-import cz.schrek.sherdog.controller.mapper.UserPermissionsMapper
+import cz.schrek.sherdog.results.UserPermissionsResult
 import cz.schrek.sherdog.service.SecurityService
 import cz.schrek.sherdog.service.UserPermissionsService
 import io.micronaut.http.HttpResponse
@@ -21,7 +21,6 @@ import javax.validation.constraints.NotNull
 class UserPermissionsController(
     private val userPermissionsService: UserPermissionsService,
     private val securityService: SecurityService,
-    private val userPermissionsMapper: UserPermissionsMapper
 ) {
 
     @Get
@@ -30,7 +29,14 @@ class UserPermissionsController(
         @NotNull @Header("api-key") apiKey: String
     ): HttpResponse<UserPermissionsResponse> {
         if (!securityService.isApiKeyAllowed(apiKey)) return HttpResponse.status(HttpStatus.UNAUTHORIZED)
+
         val userPermissions = userPermissionsService.getUserPermissions(userId)
-        return HttpResponse.ok(userPermissionsMapper.mapToUserPermissionsResponse(userPermissions))
+
+        val response = when (userPermissions) {
+            is UserPermissionsResult.Ok -> UserPermissionsResponse(userPermissions.groups)
+            else -> UserPermissionsResponse(emptyList())
+        }
+
+        return HttpResponse.ok(response)
     }
 }

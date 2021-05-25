@@ -1,11 +1,12 @@
 package cz.schrek.sherdog.service.impl
 
-import cz.schrek.sherdog.enums.AuthStatus
 import cz.schrek.sherdog.enums.UserGroup
 import cz.schrek.sherdog.repository.AuthTokenRepository
 import cz.schrek.sherdog.repository.UserRepository
 import cz.schrek.sherdog.repository.entity.AuthToken
 import cz.schrek.sherdog.repository.entity.SherdogUser
+import cz.schrek.sherdog.results.AuthCheckResult
+import cz.schrek.sherdog.results.AuthResult
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.assertj.core.api.Assertions.assertThat
@@ -46,9 +47,8 @@ internal class UserAuthServiceImplTest {
             )
         }
 
-        val (status, token, expiration) = userAuthServiceImpl.authenticateUser("schrek1", "1234")
+        val (token, expiration) = userAuthServiceImpl.authenticateUser("schrek1", "1234") as AuthResult.Approved
 
-        assertThat(status).isEqualTo(AuthStatus.APPROVED)
         assertThat(token).isNotNull
         assertThat(expiration).isBetween(
             OffsetDateTime.now().plusHours(4).plusMinutes(58),
@@ -73,11 +73,7 @@ internal class UserAuthServiceImplTest {
             null
         }
 
-        val (status, token, expiration) = userAuthServiceImpl.authenticateUser("schrek1", "1234")
-
-        assertThat(status).isEqualTo(AuthStatus.REJECTED)
-        assertThat(token).isNull()
-        assertThat(expiration).isNull()
+        userAuthServiceImpl.authenticateUser("schrek1", "1234") as AuthResult.UserNotFound
 
         verifyNoInteractions(authTokenRepository)
     }
@@ -96,11 +92,7 @@ internal class UserAuthServiceImplTest {
             )
         }
 
-        val (status, token, expiration) = userAuthServiceImpl.authenticateUser("schrek1", "1234")
-
-        assertThat(status).isEqualTo(AuthStatus.REJECTED)
-        assertThat(token).isNull()
-        assertThat(expiration).isNull()
+        userAuthServiceImpl.authenticateUser("schrek1", "1234") as AuthResult.PasswordsNotEqual
 
         verifyNoInteractions(authTokenRepository)
     }
@@ -120,9 +112,8 @@ internal class UserAuthServiceImplTest {
             )
         }
 
-        val (authStatus, expiration) = userAuthServiceImpl.checkAuthentication(USER_ID, TOKEN)
+        val (expiration) = userAuthServiceImpl.checkAuthentication(USER_ID, TOKEN) as AuthCheckResult.Approved
 
-        assertThat(authStatus).isEqualTo(AuthStatus.APPROVED)
         assertThat(expiration).isEqualTo(EXPIRATION)
     }
 
@@ -135,10 +126,7 @@ internal class UserAuthServiceImplTest {
             null
         }
 
-        val (authStatus, expiration) = userAuthServiceImpl.checkAuthentication(USER_ID, TOKEN)
-
-        assertThat(authStatus).isEqualTo(AuthStatus.REJECTED)
-        assertThat(expiration).isNull()
+        userAuthServiceImpl.checkAuthentication(USER_ID, TOKEN) as AuthCheckResult.TokenNotFound
     }
 
     @Test
@@ -156,10 +144,7 @@ internal class UserAuthServiceImplTest {
             )
         }
 
-        val (authStatus, expiration) = userAuthServiceImpl.checkAuthentication(USER_ID, TOKEN)
-
-        assertThat(authStatus).isEqualTo(AuthStatus.REJECTED)
-        assertThat(expiration).isNull()
+        userAuthServiceImpl.checkAuthentication(USER_ID, TOKEN) as AuthCheckResult.TokenIsInvalid
 
         val removedAuthTokenCaptor = ArgumentCaptor.forClass(AuthToken::class.java)
         verify(authTokenRepository, times(1)).delete(removedAuthTokenCaptor.capture())
@@ -185,10 +170,7 @@ internal class UserAuthServiceImplTest {
             )
         }
 
-        val (authStatus, expiration) = userAuthServiceImpl.checkAuthentication(USER_ID, TOKEN)
-
-        assertThat(authStatus).isEqualTo(AuthStatus.REJECTED)
-        assertThat(expiration).isNull()
+        userAuthServiceImpl.checkAuthentication(USER_ID, TOKEN) as AuthCheckResult.TokenIsInvalid
 
         val removedAuthTokenCaptor = ArgumentCaptor.forClass(AuthToken::class.java)
         verify(authTokenRepository, times(1)).delete(removedAuthTokenCaptor.capture())

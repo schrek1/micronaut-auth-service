@@ -50,13 +50,13 @@ dependencies {
 
     runtimeOnly("org.apache.logging.log4j:log4j-api:2.13.3")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
-    runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     kaptTest("io.micronaut:micronaut-inject-java")
     testCompileOnly("io.micronaut:micronaut-inject")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("com.h2database:h2")
 
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("io.micronaut:micronaut-http-client")

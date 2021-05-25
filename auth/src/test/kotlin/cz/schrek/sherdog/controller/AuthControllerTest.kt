@@ -4,9 +4,9 @@ import cz.schrek.sherdog.controller.dto.AuthCheckRequest
 import cz.schrek.sherdog.controller.dto.AuthCheckResponse
 import cz.schrek.sherdog.controller.dto.AuthRequest
 import cz.schrek.sherdog.controller.dto.AuthResponse
-import cz.schrek.sherdog.enums.AuthStatus
-import cz.schrek.sherdog.model.AuthCheckResult
-import cz.schrek.sherdog.model.AuthResult
+import cz.schrek.sherdog.controller.dto.AuthStatus
+import cz.schrek.sherdog.results.AuthCheckResult
+import cz.schrek.sherdog.results.AuthResult
 import cz.schrek.sherdog.service.SecurityService
 import cz.schrek.sherdog.service.UserAuthService
 import io.micronaut.http.HttpRequest
@@ -40,7 +40,7 @@ internal class AuthControllerTest(
         val EXPIRATION = OffsetDateTime.now()
 
         `when`(userAuthService.authenticateUser("schrek1", "heslo")).then {
-            AuthResult(AuthStatus.APPROVED, TOKEN, EXPIRATION)
+            AuthResult.Approved(TOKEN, EXPIRATION)
         }
 
         val response = httpClient.toBlocking().exchange(
@@ -189,7 +189,7 @@ internal class AuthControllerTest(
         `when`(securityService.isApiKeyAllowed(API_KEY)).then { true }
 
         `when`(userAuthService.checkAuthentication(USER_ID, TOKEN)).then {
-            AuthCheckResult(AuthStatus.APPROVED, EXPIRATION)
+            AuthCheckResult.Approved(EXPIRATION)
         }
 
         val request = HttpRequest
@@ -236,7 +236,7 @@ internal class AuthControllerTest(
             assertThat(httpResponse.status().code).isEqualTo(401)
         }
 
-        assertThat(isThrown).`as`("exception not thrown").isTrue()
+        assertThat(isThrown).`as`("exception not thrown").isTrue
     }
 
     @Test
@@ -268,7 +268,7 @@ internal class AuthControllerTest(
             assertThat(body.get()).contains("Required Header [api-key] not specified")
         }
 
-        assertThat(isThrown).`as`("exception not thrown").isTrue()
+        assertThat(isThrown).`as`("exception not thrown").isTrue
     }
 
     @Test
@@ -302,7 +302,7 @@ internal class AuthControllerTest(
             assertThat(body).isPresent
         }
 
-        assertThat(isThrown).`as`("exception not thrown").isTrue()
+        assertThat(isThrown).`as`("exception not thrown").isTrue
     }
 
     @Test
@@ -335,7 +335,7 @@ internal class AuthControllerTest(
             assertThat(httpResponse.status().code).isEqualTo(400)
         }
 
-        assertThat(isThrown).`as`("exception not thrown").isTrue()
+        assertThat(isThrown).`as`("exception not thrown").isTrue
     }
 
     @Test
@@ -369,7 +369,7 @@ internal class AuthControllerTest(
             assertThat(body).isPresent
         }
 
-        assertThat(isThrown).`as`("exception not thrown").isTrue()
+        assertThat(isThrown).`as`("exception not thrown").isTrue
     }
 
     @Test
@@ -405,7 +405,7 @@ internal class AuthControllerTest(
             assertThat(body.get()).contains("p0.token: nesm\u00ED b\u00FDt pr\u00E1zdn\u00E1")
         }
 
-        assertThat(isThrown).`as`("exception not thrown").isTrue()
+        assertThat(isThrown).`as`("exception not thrown").isTrue
     }
 
     @MockBean(UserAuthService::class)

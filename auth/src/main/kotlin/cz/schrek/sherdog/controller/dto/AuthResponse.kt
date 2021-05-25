@@ -1,6 +1,5 @@
 package cz.schrek.sherdog.controller.dto
 
-import cz.schrek.sherdog.enums.AuthStatus
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.Nullable
 import java.time.OffsetDateTime

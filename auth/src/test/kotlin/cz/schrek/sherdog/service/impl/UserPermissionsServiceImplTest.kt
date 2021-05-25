@@ -3,6 +3,7 @@ package cz.schrek.sherdog.service.impl
 import cz.schrek.sherdog.enums.UserGroup
 import cz.schrek.sherdog.repository.UserRepository
 import cz.schrek.sherdog.repository.entity.SherdogUser
+import cz.schrek.sherdog.results.UserPermissionsResult
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.assertj.core.api.Assertions.assertThat
@@ -35,7 +36,7 @@ internal class UserPermissionsServiceImplTest {
             )
         }
 
-        val (groups) = userPermissionsServiceImpl.getUserPermissions(USER_ID)
+        val (groups) = userPermissionsServiceImpl.getUserPermissions(USER_ID) as UserPermissionsResult.Ok
 
         assertThat(groups).containsExactlyInAnyOrder(UserGroup.ADMIN)
     }
@@ -48,9 +49,7 @@ internal class UserPermissionsServiceImplTest {
             null
         }
 
-        val (groups) = userPermissionsServiceImpl.getUserPermissions(USER_ID)
-
-        assertThat(groups).isEmpty()
+        userPermissionsServiceImpl.getUserPermissions(USER_ID) as UserPermissionsResult.NotBelongsToAnyGroup
     }
 
     @MockBean(UserRepository::class)

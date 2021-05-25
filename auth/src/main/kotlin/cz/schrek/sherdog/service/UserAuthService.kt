@@ -1,9 +1,7 @@
 package cz.schrek.sherdog.service
 
-import cz.schrek.sherdog.enums.UserGroup
-import cz.schrek.sherdog.model.AuthCheckResult
-import cz.schrek.sherdog.model.AuthResult
-import cz.schrek.sherdog.model.UserPermissions
+import cz.schrek.sherdog.results.AuthCheckResult
+import cz.schrek.sherdog.results.AuthResult
 import java.util.*
 
 interface UserAuthService {

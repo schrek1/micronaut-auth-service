@@ -1,0 +1,28 @@
+datasources:
+  default:
+    url: jdbc:h2:mem:devDb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: 'sa'
+    schema-generate: CREATE_DROP
+    dialect: H2
+
+jpa:
+  default:
+    packages-to-scan:
+      - 'cz.schrek.sherdog'
+
+
+jackson:
+  serialization:
+    failOnEmptyBeans: false
+    writeDatesAsTimestamps: false
+  deserialization:
+    failOnUnknownProperties: false
+    useBigDecimalForFloats: true
+  mapper:
+    defaultViewInclusion: false
+  timeZone: UTC
+  serializationInclusion: non_null
+  generator:
+    writeBigdecimalAsPlain: true

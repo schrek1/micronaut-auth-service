@@ -4,7 +4,9 @@ import cz.schrek.sherdog.controller.dto.AuthCheckRequest
 import cz.schrek.sherdog.controller.dto.AuthCheckResponse
 import cz.schrek.sherdog.controller.dto.AuthRequest
 import cz.schrek.sherdog.controller.dto.AuthResponse
-import cz.schrek.sherdog.controller.mapper.AuthMapper
+import cz.schrek.sherdog.controller.dto.AuthStatus
+import cz.schrek.sherdog.results.AuthCheckResult
+import cz.schrek.sherdog.results.AuthResult
 import cz.schrek.sherdog.service.SecurityService
 import cz.schrek.sherdog.service.UserAuthService
 import io.micronaut.http.HttpResponse
@@ -28,14 +30,19 @@ import javax.validation.constraints.NotNull
 class AuthController(
     private val userAuthService: UserAuthService,
     private val securityService: SecurityService,
-    private val authMapper: AuthMapper
 ) {
 
     @Post
     @ApiResponses(ApiResponse(responseCode = "200", content = [Content(schema = Schema(implementation = AuthResponse::class))]))
     suspend fun authenticate(@Valid @Body request: AuthRequest): HttpResponse<AuthResponse> {
         val authResult = userAuthService.authenticateUser(request.username, request.password)
-        return HttpResponse.ok(authMapper.mapAuthResponse(authResult))
+
+        val response = when (authResult) {
+            is AuthResult.Approved -> AuthResponse(AuthStatus.APPROVED, authResult.token, authResult.expiration)
+            else -> AuthResponse(AuthStatus.REJECTED)
+        }
+
+        return HttpResponse.ok(response)
     }
 
     @Post("/check")
@@ -45,8 +52,15 @@ class AuthController(
         @NotNull @Header("api-key") apiKey: String
     ): HttpResponse<AuthCheckResponse> {
         if (!securityService.isApiKeyAllowed(apiKey)) return HttpResponse.status(HttpStatus.UNAUTHORIZED)
+
         val authCheckResult = userAuthService.checkAuthentication(request.userId, request.token)
-        return HttpResponse.ok(authMapper.mapAuthCheckResponse(authCheckResult))
+
+        val response = when (authCheckResult) {
+            is AuthCheckResult.Approved -> AuthCheckResponse(AuthStatus.APPROVED, authCheckResult.expiration)
+            else -> AuthCheckResponse(AuthStatus.REJECTED)
+        }
+
+        return HttpResponse.ok(response)
     }
 
 }

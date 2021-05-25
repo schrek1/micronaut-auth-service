@@ -3,7 +3,7 @@ package cz.schrek.sherdog.controller
 import cz.schrek.sherdog.controller.dto.AuthCheckResponse
 import cz.schrek.sherdog.controller.dto.UserPermissionsResponse
 import cz.schrek.sherdog.enums.UserGroup
-import cz.schrek.sherdog.model.UserPermissions
+import cz.schrek.sherdog.results.UserPermissionsResult
 import cz.schrek.sherdog.service.SecurityService
 import cz.schrek.sherdog.service.UserPermissionsService
 import io.micronaut.http.HttpRequest
@@ -38,7 +38,7 @@ internal class UserPermissionsControllerTest(
         Mockito.`when`(securityService.isApiKeyAllowed(API_KEY)).then { true }
 
         Mockito.`when`(userPermissionsService.getUserPermissions(USER_ID)).then {
-            UserPermissions(listOf(UserGroup.ADMIN))
+            UserPermissionsResult.Ok(listOf(UserGroup.ADMIN))
         }
 
         val request: MutableHttpRequest<Unit> = HttpRequest.GET("/user/${USER_ID}/permissions")
@@ -78,7 +78,6 @@ internal class UserPermissionsControllerTest(
             isThrown = true
 
             val httpResponse = ex.response
-            val body = httpResponse.getBody(String::class.java)
 
             Assertions.assertThat(httpResponse).isNotNull
             Assertions.assertThat(httpResponse.status().code).isEqualTo(401)
