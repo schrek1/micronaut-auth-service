@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: cz.schrek.sherdog
+testFramework: junit
+sourceLanguage: kotlin
+buildTool: gradle_kotlin
+features: [annotation-api, app-name, assertj, data, data-jpa, gradle, http-client, jdbc-hikari, junit, kotlin, kotlin-application, kotlin-extension-functions, log4j2, mockito, netty-server, openapi, postgres, readme, redis-lettuce, shade, testcontainers, yaml]

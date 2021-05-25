@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+
+    <Appenders>
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d{DEFAULT}] [%level] [%t] [%logger{36}.%M():%L] - %msg%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="LogToConsole"/>
+        </Root>
+        <Logger name="io.micronaut.http" level="TRACE"/>
+        <Logger name="cz.schrek.sherdog" level="DEBUG"/>
+    </Loggers>
+</Configuration>

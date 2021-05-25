@@ -1,0 +1,46 @@
+micronaut:
+  application:
+    name: sherdogAuth
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5432/sherdog
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: 'postgres'
+    schema-generate: NONE
+    dialect: POSTGRES
+
+jpa:
+  default:
+    entity-scan:
+      packages: 'cz.schrek.sherdog'
+
+jackson:
+  serialization:
+    failOnEmptyBeans: false
+    writeDatesAsTimestamps: false
+  deserialization:
+    failOnUnknownProperties: false
+    useBigDecimalForFloats: true
+  mapper:
+    defaultViewInclusion: false
+  timeZone: UTC
+  serializationInclusion: non_null
+  generator:
+    writeBigdecimalAsPlain: true
+
+
+app:
+  security:
+    allowedApiKeys:
+      - 09ea751a-4ebe-41df-a975-fa239b93c107
+      - 8febbdcf-87fe-4925-a631-49839ada99eb

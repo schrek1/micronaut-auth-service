@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+    sherdog-data-storage:
+        image: postgres:13
+        restart: always
+        container_name: sherdog-data-storage
+        ports:
+        - "5432:5432"
+        environment:
+        - POSTGRES_DB=sherdog
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+
+        
